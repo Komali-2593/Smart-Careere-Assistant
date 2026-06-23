@@ -11,12 +11,8 @@ const API_BASE =
 
 // ─── Global fetch wrapper ─────────────────────────────────────────────────────
 async function fetchJSON(url, options = {}) {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        throw new Error(err.detail || `Request failed with status ${response.status}`);
-    }
-    return response.json();
+  const response = await fetch(url, options);
+  return response;
 }
 
 // ─── Backend Wake-up Ping (handles Render free-tier cold starts) ──────────────
@@ -683,7 +679,7 @@ async function loadOpportunities(role, skillGaps) {
         // Fetch internships matching target role
         const internshipsUrl = `${API_BASE}/api/internships/?role=${encodeURIComponent(role)}`;
         const internshipsRes = await fetchJSON(internshipsUrl);
-        const internships = await internshipsRes;
+        const internships = await internshipsRes.json();
 
         // Fetch resources matching skill gaps
         const skillsParam = (skillGaps && skillGaps.length > 0) ? skillGaps.join(",") : "";
