@@ -1,8 +1,49 @@
-// API Base Endpoint (Works locally since backend serves frontend on same host)
-// Detect if running on the backend host or another environment (like file:// or Live Server)
-const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && window.location.port === "8000"
-    ? ""
-    : "http://localhost:8000";
+// ─── API Base URL Detection ───────────────────────────────────────────────────
+// • localhost:8000  → same-origin (FastAPI serves frontend)
+// • localhost:3000  → cross-origin to localhost:8000 (separate dev server)
+// • Render / prod   → same-origin (FastAPI serves everything)
+const _host = window.location.hostname;
+const _port = window.location.port;
+const API_BASE =
+    (_host === "localhost" || _host === "127.0.0.1") && _port !== "8000"
+        ? "http://localhost:8000"   // local dev with separate frontend server
+        : "";                       // same-origin (Render prod or local :8000)
+
+// ─── Global fetch wrapper ─────────────────────────────────────────────────────
+async function fetchJSON(url, options = {}) {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.detail || `Request failed with status ${response.status}`);
+    }
+    return response.json();
+}
+
+// ─── Backend Wake-up Ping (handles Render free-tier cold starts) ──────────────
+async function pingBackendUntilReady(maxRetries = 12, intervalMs = 5000) {
+    const overlay = document.getElementById("wakeup-overlay");
+    const wakeupMsg = document.getElementById("wakeup-message");
+    if (overlay) overlay.style.display = "flex";
+
+    for (let i = 1; i <= maxRetries; i++) {
+        try {
+            const res = await fetch(`${API_BASE}/api/internships/?role=ping`, { method: "GET" });
+            if (res.ok || res.status === 404) {
+                // Backend is alive
+                if (overlay) overlay.style.display = "none";
+                return true;
+            }
+        } catch (_) {
+            // Still spinning up — keep waiting
+        }
+        if (wakeupMsg) {
+            wakeupMsg.textContent = `Server is waking up… (${i}/${maxRetries}). This takes ~30 seconds on first visit.`;
+        }
+        await new Promise(r => setTimeout(r, intervalMs));
+    }
+    if (overlay) overlay.style.display = "none";
+    return false;
+}
 
 // State Management variables
 let activeTab = "upload";
@@ -220,7 +261,7 @@ async function submitProfile() {
             const formData = new FormData();
             formData.append("file", selectedFile);
             
-            const res = await fetch(`${API_BASE}/api/resume/upload`, {
+            const res = await fetchJSON(`${API_BASE}/api/resume/upload`, {
                 method: "POST",
                 body: formData
             });
@@ -230,7 +271,7 @@ async function submitProfile() {
             }
             resumeData = await res.json();
         } else {
-            const res = await fetch(`${API_BASE}/api/resume/text`, {
+            const res = await fetchJSON(`${API_BASE}/api/resume/text`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: text })
@@ -245,14 +286,14 @@ async function submitProfile() {
         currentResumeId = resumeData.id;
         
         // 2. Perform Career analysis
-        const analysisRes = await fetch(`${API_BASE}/api/analysis`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                resume_id: currentResumeId,
-                target_role: role
-            })
-        });
+        const analysisRes = await fetchJSON(`${API_BASE}/api/analysis`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    resume_id: currentResumeId,
+                    target_role: role
+                })
+            });
         if (!analysisRes.ok) {
             const err = await analysisRes.json();
             throw new Error(err.detail || "Failed to run career analysis.");
@@ -349,7 +390,7 @@ function renderProfile(profile) {
             card.innerHTML = `
                 <div class="history-header">
                     <span class="history-title">${edu.degree || 'Degree Qualification'}</span>
-                    <span class="history-duration">${edu.year || ''}</span>
+                    <span class="history-year">${edu.year || ''}</span>
                 </div>
                 <div class="history-sub">${edu.school || 'Academic Institution'}</div>
             `;
@@ -420,7 +461,7 @@ function renderGapReport(analysis) {
 // Fetch and render learning Roadmap
 async function loadRoadmap(analysisId) {
     try {
-        const res = await fetch(`${API_BASE}/api/roadmap/analysis/${analysisId}`);
+        const res = await fetchJSON(`${API_BASE}/api/roadmap/analysis/${analysisId}`);
         if (!res.ok) throw new Error("Failed to load learning roadmap.");
         
         const data = await res.json();
@@ -471,14 +512,14 @@ async function loadRoadmap(analysisId) {
 // Initialize mock Interview session
 async function startInterviewSession(role, resumeId) {
     try {
-        const res = await fetch(`${API_BASE}/api/interview/session`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                target_role: role,
-                resume_id: resumeId
-            })
-        });
+        const res = await fetchJSON(`${API_BASE}/api/interview/session`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    target_role: role,
+                    resume_id: resumeId
+                })
+            });
         if (!res.ok) throw new Error("Failed to initialize mock coach session.");
         
         const sessionData = await res.json();
@@ -538,11 +579,11 @@ async function sendChatMessage() {
     appendChatMessage("candidate", text);
 
     try {
-        const res = await fetch(`${API_BASE}/api/interview/session/${currentSessionId}/message`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: text })
-        });
+        const res = await fetchJSON(`${API_BASE}/api/interview/session/${currentSessionId}/message`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: text })
+            });
         if (!res.ok) throw new Error("Failed to transmit chat message.");
         
         const reply = await res.json();
@@ -577,9 +618,9 @@ async function endInterviewSession() {
     reportContainer.innerHTML = `<p class="text-muted">Analyzing your response history and generating report metrics. Please wait...</p>`;
 
     try {
-        const res = await fetch(`${API_BASE}/api/interview/session/${currentSessionId}/complete`, {
-            method: "POST"
-        });
+        const res = await fetchJSON(`${API_BASE}/api/interview/session/${currentSessionId}/complete`, {
+                method: "POST"
+            });
         if (!res.ok) throw new Error("Failed to compile session evaluation.");
         
         const data = await res.json();
@@ -641,14 +682,13 @@ async function loadOpportunities(role, skillGaps) {
     try {
         // Fetch internships matching target role
         const internshipsUrl = `${API_BASE}/api/internships/?role=${encodeURIComponent(role)}`;
-        const internshipsRes = await fetch(internshipsUrl);
-        if (!internshipsRes.ok) throw new Error("Failed to load internships.");
-        const internships = await internshipsRes.json();
+        const internshipsRes = await fetchJSON(internshipsUrl);
+        const internships = await internshipsRes;
 
         // Fetch resources matching skill gaps
         const skillsParam = (skillGaps && skillGaps.length > 0) ? skillGaps.join(",") : "";
         const resourcesUrl = `${API_BASE}/api/resources/?skills=${encodeURIComponent(skillsParam)}`;
-        const resourcesRes = await fetch(resourcesUrl);
+        const resourcesRes = await fetchJSON(resourcesUrl);
         if (!resourcesRes.ok) throw new Error("Failed to load learning resources.");
         const resources = await resourcesRes.json();
 
@@ -779,3 +819,9 @@ function switchResourceCategory(category) {
         }
     });
 }
+
+// ─── Auto wake-up backend on page load ────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+    pingBackendUntilReady();
+});
+
