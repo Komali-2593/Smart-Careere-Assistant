@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Career Assistant - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand-section">
+                <div class="brand-logo">A</div>
+                <div class="brand-name">Antigravity AI</div>
+            </div>
+            <nav class="nav-links">
+                <div class="nav-item active" id="nav-upload" onclick="switchTab('upload')">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5h10.5a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0016.5 4.5H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25z">
+                        </path>
+                    </svg>
+                    <span>Resume Upload</span>
+                </div>
+                <div class="nav-item disabled" id="nav-dashboard" onclick="switchTab('dashboard')">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z">
+                        </path>
+                    </svg>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item disabled" id="nav-gaps" onclick="switchTab('gaps')">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z">
+                        </path>
+                    </svg>
+                    <span>Skill Gaps</span>
+                </div>
+                <div class="nav-item disabled" id="nav-roadmap" onclick="switchTab('roadmap')">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 6.75h15m-15 3h12m-12 3h15m-15 3h12M3 6.75h.008v.008H3V6.75zm0 3h.008v.008H3v-.008zm0 3h.008v.008H3v-.008zm0 3h.008v.008H3v-.008z">
+                        </path>
+                    </svg>
+                    <span>Roadmap</span>
+                </div>
+                <div class="nav-item disabled" id="nav-interview" onclick="switchTab('interview')">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z">
+                        </path>
+                    </svg>
+                    <span>Interview Coach</span>
+                </div>
+                <div class="nav-item disabled" id="nav-opportunities" onclick="switchTab('opportunities')">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M20.25 14.15v4.25c0 .621-.504 1.125-1.125 1.125H4.875c-.621 0-1.125-.504-1.125-1.125v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.45.258-.717.258H3.84c-.267 0-.523-.093-.717-.258m16.5 0a2.18 2.18 0 01.75 1.661v3.397c0 1.081-.768 2.015-1.837 2.175a48.114 48.114 0 01-3.413.387m-9.62-9.62c0-1.08.767-2.014 1.836-2.174A47.647 47.647 0 0112 4.5c1.626 0 3.208.082 4.764.24 1.07.16 1.836 1.094 1.836 2.174v2.24H3.076V6.75v0z">
+                        </path>
+                    </svg>
+                    <span>Opportunities</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Display Frame -->
+        <main class="main-content">
+            <!-- Top Nav Bar Status -->
+            <header class="top-nav">
+                <div class="page-title">
+                    <h1 id="main-title">Smart Career Assistant</h1>
+                    <p id="main-subtitle">Upload details or copy resume text to begin career intelligence analysis</p>
+                </div>
+                <div class="top-actions hidden" id="top-action-bar">
+                    <button class="btn-secondary" onclick="resetApp()">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99">
+                            </path>
+                        </svg>
+                        <span>Analyze New Profile</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 1. VIEW: Upload View -->
+            <section id="view-upload" class="tab-view">
+                <div class="upload-container">
+                    <!-- Left: Upload zone -->
+                    <div class="glass-card">
+                        <h2 class="section-title">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5">
+                                </path>
+                            </svg>
+                            <span>Resume Upload</span>
+                        </h2>
+
+                        <div class="drag-drop-zone" id="drop-zone">
+                            <div class="upload-icon-wrapper">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5h10.5a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0016.5 4.5H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <p>Drag and drop your file here, or <span class="browse-btn">browse files</span></p>
+                            <p class="file-formats">Accepts PDF or TXT (Max 5MB)</p>
+                            <input type="file" id="file-input" accept=".pdf,.txt">
+
+                            <!-- Selected File Banner -->
+                            <div class="selected-file-display" id="file-display">
+                                <div class="file-info">
+                                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z">
+                                        </path>
+                                    </svg>
+                                    <span id="selected-file-name">filename.pdf</span>
+                                </div>
+                                <button class="remove-file" onclick="clearSelectedFile(event)">
+                                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Text copy & Target Job details -->
+                    <div class="glass-card">
+                        <h2 class="section-title">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10">
+                                </path>
+                            </svg>
+                            <span>Profile & Target Role</span>
+                        </h2>
+
+                        <div class="form-group">
+                            <label for="target-role">Target Career Position</label>
+                            <input type="text" id="target-role" class="form-control"
+                                placeholder="e.g. Full Stack Developer, Data Scientist">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="resume-text">Or Paste Resume Text</label>
+                            <textarea id="resume-text" class="form-control"
+                                placeholder="Paste your resume text summary here..."></textarea>
+                        </div>
+
+                        <button id="analyze-btn" class="btn-primary" onclick="submitProfile()">
+                            <span>Execute Agents Analysis</span>
+                            <div class="spinner" id="btn-spinner"></div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. VIEW: Dashboard Overview View -->
+            <section id="view-dashboard" class="tab-view analysis-panel">
+                <div class="results-grid">
+                    <!-- Left: Profile details parsed -->
+                    <div class="glass-card">
+                        <h2 class="section-title">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z">
+                                </path>
+                            </svg>
+                            <span>Parsed Candidate Profile</span>
+                        </h2>
+                        <div class="profile-summary">
+                            <div class="candidate-name" id="profile-name">John Doe</div>
+                            <div class="candidate-email" id="profile-email">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75">
+                                    </path>
+                                </svg>
+                                <span id="profile-email-text">john.doe@example.com</span>
+                            </div>
+                            <div class="section-subtitle">Summary</div>
+                            <p class="profile-desc" id="profile-summary-text">Summary of qualifications goes here.</p>
+
+                            <div class="section-subtitle">Extracted Core Skills</div>
+                            <div class="skills-list" id="profile-skills-list">
+                                <!-- Tags rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Experience Timeline list -->
+                    <div class="glass-card">
+                        <h2 class="section-title">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M20.25 14.15v4.25c0 .621-.504 1.125-1.125 1.125H4.875c-.621 0-1.125-.504-1.125-1.125v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.45.258-.717.258H3.84c-.267 0-.523-.093-.717-.258m16.5 0a2.18 2.18 0 01.75 1.661v3.397c0 1.081-.768 2.015-1.837 2.175a48.114 48.114 0 01-3.413.387m-9.62-9.62c0-1.08.767-2.014 1.836-2.174A47.647 47.647 0 0112 4.5c1.626 0 3.208.082 4.764.24 1.07.16 1.836 1.094 1.836 2.174v2.24H3.076V6.75v0z">
+                                </path>
+                            </svg>
+                            <span>Experience & Education</span>
+                        </h2>
+                        <div class="history-items" id="history-timeline-list">
+                            <!-- Items rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. VIEW: Skill Gaps View -->
+            <section id="view-gaps" class="tab-view analysis-panel">
+                <div class="glass-card">
+                    <h2 class="section-title">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"></path>
+                        </svg>
+                        <span>Skill Gap Report & Role Fit</span>
+                    </h2>
+
+                    <!-- Skill Fit Gauge details -->
+                    <div class="gap-gauge-container">
+                        <div class="radial-progress">
+                            <svg>
+                                <circle cx="45" cy="45" r="40"></circle>
+                                <circle cx="45" cy="45" r="40" class="progress-val" id="gap-progress-circle"></circle>
+                            </svg>
+                            <div class="score-text" id="gap-score-text">0%</div>
+                        </div>
+                        <div class="gauge-description">
+                            <div class="gauge-title">Job Fit Evaluation Score</div>
+                            <div class="gauge-sub" id="gap-comparison-label">Matching requirements for position</div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison list grids -->
+                    <div class="skills-comparison">
+                        <div class="skills-group">
+                            <div class="skills-group-title have">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Matching Core Skills</span>
+                            </div>
+                            <div class="list-tags" id="gap-skills-have">
+                                <!-- Tag badges -->
+                            </div>
+                        </div>
+
+                        <div class="skills-group">
+                            <div class="skills-group-title gaps">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z">
+                                    </path>
+                                </svg>
+                                <span>Identified Skill Gaps</span>
+                            </div>
+                            <div class="list-tags" id="gap-skills-missing">
+                                <!-- Tag badges -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations text details -->
+                    <div class="section-subtitle" style="margin-top: 2rem;">Tactical Recommendations</div>
+                    <div class="profile-desc" id="gap-recommendations-text"
+                        style="font-size: 0.95rem; margin-top: 0.5rem; background: rgba(255, 255, 255, 0.02); padding: 1rem; border-radius: var(--border-radius-md); border: 1px solid var(--glass-border);">
+                        Recommendations details
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. VIEW: Roadmap Timeline View -->
+            <section id="view-roadmap" class="tab-view analysis-panel">
+                <div class="glass-card">
+                    <h2 class="section-title">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 6.75h15m-15 3h12m-12 3h15m-15 3h12M3 6.75h.008v.008H3V6.75zm0 3h.008v.008H3v-.008zm0 3h.008v.008H3v-.008zm0 3h.008v.008H3v-.008z">
+                            </path>
+                        </svg>
+                        <span>Strategic Learning Roadmap</span>
+                    </h2>
+                    <p class="profile-desc" style="margin-bottom: 1.5rem;">
+                        This timeline represents a customized syllabus to bridge your technical skill gaps.
+                        Estimated Study Timeline: <strong id="roadmap-duration" style="color: var(--secondary);">0
+                            Weeks</strong>
+                    </p>
+
+                    <div class="roadmap-timeline" id="roadmap-timeline-steps">
+                        <!-- Steps dynamically loaded -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. VIEW: Interview Coach Chat panel -->
+            <section id="view-interview" class="tab-view analysis-panel">
+                <div class="interview-coach-container">
+                    <!-- Left: Chat interaction -->
+                    <div class="chat-box">
+                        <div class="chat-header">
+                            <div class="chat-coach-profile">
+                                <div class="coach-avatar">AI</div>
+                                <div class="coach-info-text">
+                                    <div class="coach-name" id="interview-coach-title">Interviewer Coach</div>
+                                    <div class="coach-status">Session Active</div>
+                                </div>
+                            </div>
+                            <!-- Finish Chat session -->
+                            <button class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;"
+                                onclick="endInterviewSession()">
+                                Complete Session
+                            </button>
+                        </div>
+
+                        <!-- Chat message thread -->
+                        <div class="chat-messages" id="chat-messages-container">
+                            <!-- Messages populated dynamic -->
+                        </div>
+
+                        <!-- Chat input container -->
+                        <div class="chat-input-area">
+                            <input type="text" id="chat-user-input" placeholder="Type your answer here..."
+                                onkeypress="handleChatEnter(event)">
+                            <button class="btn-send" onclick="sendChatMessage()">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Feedbacks & evaluation summaries -->
+                    <div class="feedback-summary-panel">
+                        <div class="feedback-placeholder" id="interview-feedback-placeholder">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.03 0 1.9.693 2.166 1.638m-7.377 12.408l-3.11-3.11m0 0l-1.688 1.688m1.688-1.688v6.187a2.25 2.25 0 01-2.25 2.25H3.75a2.25 2.25 0 01-2.25-2.25V13.5a2.25 2.25 0 012.25-2.25h2.25a2.25 2.25 0 012.25 2.25z">
+                                </path>
+                            </svg>
+                            <p>Complete the interview conversation to generate your tactical score and assessment
+                                feedback report.</p>
+                        </div>
+                        <div class="feedback-content" id="interview-feedback-report">
+                            <!-- Report details -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. VIEW: Opportunities & Resources View -->
+            <section id="view-opportunities" class="tab-view analysis-panel">
+                <div class="results-grid">
+                    <!-- Left: Resources filtered by skill gaps -->
+                    <div class="glass-card" style="display: flex; flex-direction: column;">
+                        <h2 class="section-title">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25">
+                                </path>
+                            </svg>
+                            <span>Bridge the Skill Gaps</span>
+                        </h2>
+                        <p class="profile-desc" style="font-size: 0.85rem; margin-bottom: 1rem;">
+                            Curated resources matching your identified skill gaps:
+                        </p>
+
+                        <!-- Sub-tabs for Resource categories -->
+                        <div class="resource-subtabs"
+                            style="display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                            <button class="btn-subtab active" onclick="switchResourceCategory('youtube')"
+                                style="background: transparent; border: none; color: var(--primary); font-family: var(--font-heading); font-weight: 600; font-size: 0.85rem; cursor: pointer; padding: 0.25rem 0.5rem; outline: none;">YouTube
+                                Videos</button>
+                            <button class="btn-subtab" onclick="switchResourceCategory('documentation')"
+                                style="background: transparent; border: none; color: var(--text-secondary); font-family: var(--font-heading); font-weight: 500; font-size: 0.85rem; cursor: pointer; padding: 0.25rem 0.5rem; outline: none;">Documentation</button>
+                            <button class="btn-subtab" onclick="switchResourceCategory('practice')"
+                                style="background: transparent; border: none; color: var(--text-secondary); font-family: var(--font-heading); font-weight: 500; font-size: 0.85rem; cursor: pointer; padding: 0.25rem 0.5rem; outline: none;">Practice
+                                Sites</button>
+                        </div>
+
+                        <!-- Resource lists -->
+                        <div id="resource-category-youtube" class="resource-list-container active-category">
+                            <!-- YouTube resources dynamic -->
+                        </div>
+                        <div id="resource-category-documentation" class="resource-list-container"
+                            style="display: none;">
+                            <!-- Documentation resources dynamic -->
+                        </div>
+                        <div id="resource-category-practice" class="resource-list-container" style="display: none;">
+                            <!-- Practice resources dynamic -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Internships matching the target role -->
+                    <div class="glass-card">
+                        <h2 class="section-title">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M20.25 14.15v4.25c0 .621-.504 1.125-1.125 1.125H4.875c-.621 0-1.125-.504-1.125-1.125v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.45.258-.717.258H3.84c-.267 0-.523-.093-.717-.258m16.5 0a2.18 2.18 0 01.75 1.661v3.397c0 1.081-.768 2.015-1.837 2.175a48.114 48.114 0 01-3.413.387m-9.62-9.62c0-1.08.767-2.014 1.836-2.174A47.647 47.647 0 0112 4.5c1.626 0 3.208.082 4.764.24 1.07.16 1.836 1.094 1.836 2.174v2.24H3.076V6.75v0z">
+                                </path>
+                            </svg>
+                            <span>Matching Internships</span>
+                        </h2>
+                        <p class="profile-desc" style="font-size: 0.85rem; margin-bottom: 1rem;">
+                            Internships matching your target role: <strong id="opportunities-target-role"
+                                style="color: var(--secondary);">Role</strong>
+                        </p>
+                        <div id="internships-list-container" class="history-items">
+                            <!-- Internships dynamic -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Frontend Script file -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>
