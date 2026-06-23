@@ -4,10 +4,35 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
+import logging
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="Smart Career Assistant",
+    description="FastAPI Backend for Phase 1 Smart Career Assistant",
+    version="1.0.0"
+)
+
+# Environment variable validation
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+MOCK_MODE = os.getenv("MOCK_MODE", "false").lower() == "true"
+if not GEMINI_API_KEY and not MOCK_MODE:
+    # Log warning and enable mock mode automatically
+    logging.warning("GEMINI_API_KEY not set; enabling MOCK_MODE for safe operation.")
+    MOCK_MODE = True
+
+# CORS middleware configuration to allow frontend access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all for development. Can restrict as needed.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 from .database import engine, Base, SessionLocal
 from .routers import resume, analysis, roadmap, interview, internships, resources
@@ -29,20 +54,7 @@ finally:
     db.close()
 
 
-app = FastAPI(
-    title="Smart Career Assistant",
-    description="FastAPI Backend for Phase 1 Smart Career Assistant",
-    version="1.0.0"
-)
 
-# CORS middleware configuration to allow frontend access
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allow all for development. Can restrict as needed.
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Register backend API routers
 app.include_router(resume.router)
