@@ -15,6 +15,20 @@ async function fetchJSON(url, options = {}) {
   return response;
 }
 
+// Safe JSON parsing with debugging info
+async function safeParse(res) {
+  console.log("res:", res);
+  console.log("typeof res:", typeof res);
+  console.log("constructor:", res?.constructor?.name);
+  if (typeof res.json === "function") {
+    return await res.json();
+  }
+  if (res && typeof res === "object" && "data" in res) {
+    return res.data;
+  }
+  throw new Error("Response does not have json() or data property");
+}
+
 // ─── Backend Wake-up Ping (handles Render free-tier cold starts) ──────────────
 async function pingBackendUntilReady(maxRetries = 12, intervalMs = 5000) {
     const overlay = document.getElementById("wakeup-overlay");
@@ -262,10 +276,10 @@ async function submitProfile() {
                 body: formData
             });
             if (!res.ok) {
-                const err = await res.json();
+                const err = await safeParse(res);
                 throw new Error(err.detail || "Failed to upload resume file.");
             }
-            resumeData = await res.json();
+            resumeData = await safeParse(res);
         } else {
             const res = await fetchJSON(`${API_BASE}/api/resume/text`, {
                 method: "POST",
@@ -273,10 +287,10 @@ async function submitProfile() {
                 body: JSON.stringify({ text: text })
             });
             if (!res.ok) {
-                const err = await res.json();
+                const err = await safeParse(res);
                 throw new Error(err.detail || "Failed to process resume text.");
             }
-            resumeData = await res.json();
+            resumeData = await safeParse(res);
         }
 
         currentResumeId = resumeData.id;
@@ -291,10 +305,10 @@ async function submitProfile() {
                 })
             });
         if (!analysisRes.ok) {
-            const err = await analysisRes.json();
+            const err = await safeParse(analysisRes);
             throw new Error(err.detail || "Failed to run career analysis.");
         }
-        const analysisData = await analysisRes.json();
+        const analysisData = await safeParse(analysisRes);
         currentAnalysisId = analysisData.id;
 
         // 3. Render Parsed details
@@ -460,7 +474,7 @@ async function loadRoadmap(analysisId) {
         const res = await fetchJSON(`${API_BASE}/api/roadmap/analysis/${analysisId}`);
         if (!res.ok) throw new Error("Failed to load learning roadmap.");
         
-        const data = await res.json();
+        const data = await safeParse(res);
         
         document.getElementById("roadmap-duration").textContent = data.estimated_duration || "N/A";
         
@@ -518,7 +532,7 @@ async function startInterviewSession(role, resumeId) {
             });
         if (!res.ok) throw new Error("Failed to initialize mock coach session.");
         
-        const sessionData = await res.json();
+        const sessionData = await safeParse(res);
         currentSessionId = sessionData.id;
         interviewStatus = "active";
 
@@ -582,7 +596,7 @@ async function sendChatMessage() {
             });
         if (!res.ok) throw new Error("Failed to transmit chat message.");
         
-        const reply = await res.json();
+        const reply = await safeParse(res);
         appendChatMessage(reply.sender, reply.message);
     } catch (e) {
         console.error(e);
@@ -619,7 +633,7 @@ async function endInterviewSession() {
             });
         if (!res.ok) throw new Error("Failed to compile session evaluation.");
         
-        const data = await res.json();
+        const data = await safeParse(res);
         
         // Helper markdown formatting
         reportContainer.innerHTML = parseFeedbackMarkdown(data.feedback);
@@ -679,14 +693,14 @@ async function loadOpportunities(role, skillGaps) {
         // Fetch internships matching target role
         const internshipsUrl = `${API_BASE}/api/internships/?role=${encodeURIComponent(role)}`;
         const internshipsRes = await fetchJSON(internshipsUrl);
-        const internships = await internshipsRes.json();
+        const internships = await safeParse(internshipsRes);
 
         // Fetch resources matching skill gaps
         const skillsParam = (skillGaps && skillGaps.length > 0) ? skillGaps.join(",") : "";
         const resourcesUrl = `${API_BASE}/api/resources/?skills=${encodeURIComponent(skillsParam)}`;
         const resourcesRes = await fetchJSON(resourcesUrl);
         if (!resourcesRes.ok) throw new Error("Failed to load learning resources.");
-        const resources = await resourcesRes.json();
+        const resources = await safeParse(resourcesRes);
 
         // Render data to DOM
         renderOpportunities(role, internships, resources);
